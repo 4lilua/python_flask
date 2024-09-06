@@ -69,13 +69,48 @@ def usuario_save():
     else:
         flash ('Preencha todos os campos!')
         return redirect('/usuario/add')
+    
+@app.route('/usuario/remove/<int:id>')
+def usuario_remove(id):
+    if id > 0:
+        usuario = Usuario.query.get(id)
+        db.session.delete(usuario)
+        db.session.commit()
+        flash('Usuário removido com sucesso!!!')
+        return redirect('/usuario')
+    else:
+        flash('Caminho incorreto!')
+        return redirect('/usuario')
+    
+@app.route('/usuario/edita/<int:id>')
+def usuario_eita(id):
+    usuario = Usuario.query.get(id)
+    return render_template('usuario_edita.html', dados = usuario)
+
+@app.route('/usuario/editasave', methods=['POST'])
+def usuario_edita_save():
+    nome = request.form.get('nome')
+    email = request.form.get('email')
+    idade = request.form.get('idade')
+    id = request.form.get('id')
+    if id and nome and email and idade:
+        usuario = Usuario.query.get(id)
+        usuario.nome = nome
+        usuario.email = email
+        usuario.idade = idade
+        db.session.commit()
+        flash('Dados atualizados com sucesso!!!')
+        return redirect('/usuario')
+    else:
+        flash('Faltando dados!')
+        return redirect('/usuario')
 
 if __name__ == '__main__':
     app.run()
 
 #Passo a passo para inicializar
     #instalar o python
-    #ctrl shift p envirome..
+    #ctrl shift p enviroment...
     #verificar se tem o (.venv) no começo do terminal
     #pip install flask
     #flask run --debug
